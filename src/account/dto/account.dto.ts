@@ -1,6 +1,15 @@
+import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 export class AccountDto {
   //   id: number;
-  device_token: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
   password: string;
+
   type: string;
 }
