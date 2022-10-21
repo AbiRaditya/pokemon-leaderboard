@@ -24,11 +24,11 @@ export class AccountService {
       account.password = await passwordEncDec.encrypt(accountDto.password);
       account.type = accountDto.type;
 
-      const response = await this.accountRepository.save(account);
+      const { id, username } = await this.accountRepository.save(account);
 
       return {
-        id: response.id,
-        username: response.username,
+        id,
+        username,
       };
     } catch (error) {
       // console.log(error, 'create account error');
