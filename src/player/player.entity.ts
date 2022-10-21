@@ -5,14 +5,15 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  // OneToMany,
+  OneToMany,
 } from 'typeorm';
-// import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
 
-@Entity('account')
-export class Account extends BaseEntity {
+import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
+
+@Entity('player')
+export class Player extends BaseEntity {
   @PrimaryGeneratedColumn({
-    comment: 'Account PK',
+    comment: 'Player PK',
   })
   id: number;
 
@@ -21,20 +22,13 @@ export class Account extends BaseEntity {
     nullable: false,
     unique: true,
   })
-  username: string;
+  device_token: string;
 
   @Column({
-    type: 'varchar',
+    unique: true,
     nullable: false,
-    select: false,
   })
-  password: string;
-
-  @Column({
-    type: 'varchar',
-    default: 'staff',
-  })
-  type: string;
+  player_name: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -49,6 +43,6 @@ export class Account extends BaseEntity {
   })
   public updated_at: Date;
 
-  // @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.account)
-  // leaderboards: Leaderboard[];
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.player)
+  leaderboards: Leaderboard[];
 }
