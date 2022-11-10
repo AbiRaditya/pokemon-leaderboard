@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateLeaderboardDto } from './dto/leaderboard.dto';
@@ -17,10 +17,10 @@ export class LeaderboardService {
     const leaderboard = new Leaderboard();
     leaderboard.type = createLeaderboardDto.type;
     leaderboard.score = createLeaderboardDto.score;
-    // leaderboard.account.id = createLeaderboardDto.accountId;
+    leaderboard.playerId = createLeaderboardDto.accountId;
     // await dataSource.manager.save(leaderboard);
-    await this.leaderboardRepository.save(Leaderboard);
-    return;
+    const response = await this.leaderboardRepository.save(leaderboard);
+    return response;
   }
   async findAll(): Promise<Leaderboard[]> {
     return this.leaderboardRepository.find();

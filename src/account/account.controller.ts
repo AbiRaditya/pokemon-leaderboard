@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
+  // BadRequestException,
   UseInterceptors,
   ClassSerializerInterceptor,
-  NotFoundException,
+  // NotFoundException,
   Body,
   UseGuards,
   Controller,
@@ -11,6 +11,7 @@ import {
   Get,
   // Param,
   Post,
+  HttpException,
 } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 // import { AuthGuard } from '@nestjs/passport';
@@ -57,11 +58,12 @@ export class AccountController {
         message: [
           `Account ${response.username} created succesfully with id ${response.id}`,
         ],
-        status: 200,
+        status: 201,
       };
     } catch (error) {
       Logger.log(error, 'error 41');
-      return globalExceptionFIlter.catch(error);
+      const errorObj = globalExceptionFIlter.catch(error);
+      throw new HttpException(errorObj, errorObj.statusCode);
       //   return error;
     }
   }
@@ -76,7 +78,8 @@ export class AccountController {
       });
     } catch (error) {
       Logger.log(error, 'error findAll');
-      return globalExceptionFIlter.catch(error);
+      const errorObj = globalExceptionFIlter.catch(error);
+      throw new HttpException(errorObj, errorObj.statusCode);
     }
   }
 

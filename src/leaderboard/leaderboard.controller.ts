@@ -3,6 +3,7 @@ import {
   Controller,
   //   Delete,
   Get,
+  Logger,
   //   Param,
   Post,
   //   ParseIntPipe,
@@ -15,10 +16,12 @@ import { LeaderboardService } from './leaderboard.service';
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
   @Post()
-  create(
+  async create(
     @Body() createLeaderBoradDto: CreateLeaderboardDto,
   ): Promise<Leaderboard> {
-    return this.leaderboardService.create(createLeaderBoradDto);
+    Logger.log(createLeaderBoradDto, 'createLeaderBoradDto');
+    const response = await this.leaderboardService.create(createLeaderBoradDto);
+    return response;
   }
 
   @Get()

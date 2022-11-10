@@ -20,7 +20,7 @@ export class AccountService {
   ): Promise<{ id: number; username: string }> {
     try {
       const account = new Account();
-      Logger.log(accountDto, 'accountDto');
+      // Logger.log(accountDto, 'accountDto');
       account.username = accountDto.username;
       account.password = await passwordEncDec.encrypt(accountDto.password);
       account.type = accountDto.type;

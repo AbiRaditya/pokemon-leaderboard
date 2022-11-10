@@ -40,6 +40,9 @@ export class Leaderboard extends BaseEntity {
   })
   public updated_at: Date;
 
+  @Column()
+  playerId: number;
+
   @ManyToOne(() => Player, (player) => player.leaderboards)
   player: Player;
 }

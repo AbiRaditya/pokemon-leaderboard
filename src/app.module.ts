@@ -11,6 +11,7 @@ import { Player } from './player/player.entity';
 import { AccountModule } from './account/account.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
+import { PlayerModule } from './player/player.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     AccountModule,
     LeaderboardModule,
+    PlayerModule,
     ConfigModule.forRoot(),
     AuthModule,
   ],
