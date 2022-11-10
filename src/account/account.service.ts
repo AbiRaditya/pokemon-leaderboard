@@ -20,6 +20,7 @@ export class AccountService {
   ): Promise<{ id: number; username: string }> {
     try {
       const account = new Account();
+      Logger.log(accountDto, 'accountDto');
       account.username = accountDto.username;
       account.password = await passwordEncDec.encrypt(accountDto.password);
       account.type = accountDto.type;
@@ -40,9 +41,22 @@ export class AccountService {
     return await this.accountRepository.find();
   }
 
-  async findOne(username: string): Promise<Account> {
-    const account = await this.accountRepository.findOneBy({ username });
-    Logger.log(account);
-    return;
+  async findOne(username: string): Promise<AccountDto> {
+    try {
+      Logger.log(username, 'username 46');
+      if (!username) {
+        throw new Error('Username Not Found');
+      }
+
+      const account = await this.accountRepository.findOne({
+        where: {
+          username: username,
+        },
+      });
+      Logger.log(JSON.stringify(account), 'findOne');
+      return account;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
