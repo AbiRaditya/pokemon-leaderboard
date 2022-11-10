@@ -26,7 +26,7 @@ export class Account extends BaseEntity {
   @Column({
     type: 'varchar',
     nullable: false,
-    select: false,
+    // select: false,
   })
   password: string;
 

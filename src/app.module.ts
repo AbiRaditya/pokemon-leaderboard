@@ -10,6 +10,7 @@ import { Player } from './player/player.entity';
 
 import { AccountModule } from './account/account.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
     AccountModule,
     LeaderboardModule,
     ConfigModule.forRoot(),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

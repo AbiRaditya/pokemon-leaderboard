@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
-export class AccountDto {
+export class CreateLoginDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
@@ -13,9 +13,7 @@ export class AccountDto {
   @Exclude({ toPlainOnly: true })
   password: string;
 
-  type: string;
-
-  constructor(partial: Partial<AccountDto>) {
+  constructor(partial: Partial<CreateLoginDto>) {
     Object.assign(this, partial);
   }
 }
