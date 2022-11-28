@@ -41,6 +41,11 @@ export class AccountService {
     return await this.accountRepository.find();
   }
 
+  async remove(id: string): Promise<string> {
+    await this.accountRepository.delete({ id: +id });
+    return `Account with id:${id} successfully deleted`;
+  }
+
   async findOne(username: string): Promise<AccountDto> {
     try {
       Logger.log(username, 'username 46');

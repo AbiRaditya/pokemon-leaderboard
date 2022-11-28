@@ -8,5 +8,6 @@ import { LeaderboardService } from './leaderboard.service';
   imports: [TypeOrmModule.forFeature([Leaderboard])],
   providers: [LeaderboardService],
   controllers: [LeaderboardController],
+  exports: [LeaderboardService],
 })
 export class LeaderboardModule {}
