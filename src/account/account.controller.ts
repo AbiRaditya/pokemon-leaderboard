@@ -1,16 +1,17 @@
 import {
-  BadRequestException,
+  // BadRequestException,
   UseInterceptors,
   ClassSerializerInterceptor,
-  NotFoundException,
+  // NotFoundException,
   Body,
   UseGuards,
   Controller,
   Request,
-  //   Delete,
+  Delete,
   Get,
-  // Param,
+  Param,
   Post,
+  HttpException,
 } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 // import { AuthGuard } from '@nestjs/passport';
@@ -23,7 +24,7 @@ import { MessageResponse } from './dto/response-msg.dto';
 
 import { Account } from './account.entity';
 import { AccountService } from './account.service';
-import { AuthService } from 'src/auth/auth.service';
+// import { AuthService } from 'src/auth/auth.service';
 
 // import passwordEncDec from 'src/helpers/Bcrypt';
 import { IResponseError } from 'src/error-handler/response.error.interface';
@@ -36,8 +37,7 @@ const globalExceptionFIlter = new GlobalExceptionFilter();
 @Controller('account')
 export class AccountController {
   constructor(
-    private readonly accountService: AccountService,
-    private readonly authService: AuthService,
+    private readonly accountService: AccountService, // private readonly authService: AuthService,
   ) {}
 
   @Post()
@@ -57,11 +57,12 @@ export class AccountController {
         message: [
           `Account ${response.username} created succesfully with id ${response.id}`,
         ],
-        status: 200,
+        status: 201,
       };
     } catch (error) {
       Logger.log(error, 'error 41');
-      return globalExceptionFIlter.catch(error);
+      const errorObj = globalExceptionFIlter.catch(error);
+      throw new HttpException(errorObj, errorObj.statusCode);
       //   return error;
     }
   }
@@ -71,49 +72,22 @@ export class AccountController {
     try {
       const response = await this.accountService.findAll();
       // new ValidationPipe()
-      return response.map((data) => {
-        return new AccountDto(data);
-      });
+      // return response.map((data) => {
+      //   return new AccountDto(data);
+      // });
+      return response;
     } catch (error) {
       Logger.log(error, 'error findAll');
-      return globalExceptionFIlter.catch(error);
+      const errorObj = globalExceptionFIlter.catch(error);
+      throw new HttpException(errorObj, errorObj.statusCode);
     }
   }
 
   // @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
-  }
-  // async login(
-  //   @Body() loginData: LoginDto,
-  // ): Promise<AccountDto | ExceptionDto | IResponseError | LoginDto> {
-  //   try {
-  //     // Logger.log(loginData, 'ini username');
-  //     if (!loginData.username) {
-  //       throw new BadRequestException();
-  //     }
-  //     const response = await this.accountService.findOne(loginData.username);
-  //     Logger.log(response, 'response');
-  //     if (!response) {
-  //       return LoginError.errorResponse();
-  //     }
-  //     console.log(loginData.password, response.password, 'password');
-  //     Logger.log(loginData.password, response.password, 'password');
-  //     const isSame = await passwordEncDec.comparePassword(
-  //       loginData.password,
-  //       response.password,
-  //     );
-  //     if (!isSame) {
-  //       return LoginError.errorResponse();
-  //     }
-
-  //     return new AccountDto(response);
-  //   } catch (error) {
-  //     Logger.log(error, 'error login');
-  //     return globalExceptionFIlter.catch(error);
-  //   }
+  // @UseGuards(LocalAuthGuard)
+  // @Post('login')
+  // async login(@Request() req) {
+  //   return this.authService.login(req.user);
   // }
   // @Catch(QueryFailedError)
 
@@ -122,8 +96,20 @@ export class AccountController {
   //     return this.accountService.findOne(id);
   //   }
 
-  //   @Delete(':id')
-  //   remove(@Param('id') id: string): Promise<void> {
-  //     return this.accountService.remove(id);
-  //   }
+  @Delete(':id')
+  async remove(
+    @Param('id') id: string,
+  ): Promise<{ message: [string]; status: number }> {
+    try {
+      const response = await this.accountService.remove(id);
+      return {
+        message: [response],
+        status: 200,
+      };
+    } catch (error) {
+      Logger.log(error, 'error findAll');
+      const errorObj = globalExceptionFIlter.catch(error);
+      throw new HttpException(errorObj, errorObj.statusCode);
+    }
+  }
 }

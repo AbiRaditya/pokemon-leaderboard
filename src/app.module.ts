@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,22 +11,30 @@ import { Player } from './player/player.entity';
 import { AccountModule } from './account/account.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
+import { PlayerModule } from './player/player.module';
+import { QuizModules } from './quiz/quiz.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'leaderboard-pokemon',
-      entities: [Account, Leaderboard, Player],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: +configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        entities: [Account, Leaderboard, Player],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     AccountModule,
     LeaderboardModule,
-    ConfigModule.forRoot(),
+    PlayerModule,
+    QuizModules,
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
   ],
   controllers: [AppController],
