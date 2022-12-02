@@ -24,7 +24,7 @@ import { MessageResponse } from './dto/response-msg.dto';
 
 import { Account } from './account.entity';
 import { AccountService } from './account.service';
-import { AuthService } from 'src/auth/auth.service';
+// import { AuthService } from 'src/auth/auth.service';
 
 // import passwordEncDec from 'src/helpers/Bcrypt';
 import { IResponseError } from 'src/error-handler/response.error.interface';
@@ -37,8 +37,7 @@ const globalExceptionFIlter = new GlobalExceptionFilter();
 @Controller('account')
 export class AccountController {
   constructor(
-    private readonly accountService: AccountService,
-    private readonly authService: AuthService,
+    private readonly accountService: AccountService, // private readonly authService: AuthService,
   ) {}
 
   @Post()
@@ -73,9 +72,10 @@ export class AccountController {
     try {
       const response = await this.accountService.findAll();
       // new ValidationPipe()
-      return response.map((data) => {
-        return new AccountDto(data);
-      });
+      // return response.map((data) => {
+      //   return new AccountDto(data);
+      // });
+      return response;
     } catch (error) {
       Logger.log(error, 'error findAll');
       const errorObj = globalExceptionFIlter.catch(error);
@@ -84,11 +84,11 @@ export class AccountController {
   }
 
   // @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
-  }
+  // @UseGuards(LocalAuthGuard)
+  // @Post('login')
+  // async login(@Request() req) {
+  //   return this.authService.login(req.user);
+  // }
   // @Catch(QueryFailedError)
 
   //   @Get(':id')

@@ -1,11 +1,11 @@
 import {
   Body,
-  ClassSerializerInterceptor,
+  // ClassSerializerInterceptor,
   Controller,
   Get,
   HttpException,
   Post,
-  UseInterceptors,
+  // UseInterceptors,
 } from '@nestjs/common';
 import { PlayerService } from './player.service';
 import { Player } from './player.entity';
@@ -42,21 +42,21 @@ export class PlayerController {
     }
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
+  // @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getAllPlayer(): Promise<
     { data: PlayerDto[]; totalItems: number } | IResponseError
   > {
     try {
       const response = await this.playerService.findAll();
-      const data = {
-        data: response[0].map((each) => {
-          return new PlayerDto(each);
-        }),
-        totalItems: response[1],
-      };
-      return data;
-      //   return response;
+      // const data = {
+      //   data: response[0].map((each) => {
+      //     return new PlayerDto(each);
+      //   }),
+      //   totalItems: response[1],
+      // };
+      // return data;
+      return { data: response[0], totalItems: response[1] };
     } catch (error) {
       Logger.log(error, 'error PlayerController');
       const errorObj = globalExceptionFIlter.catch(error);

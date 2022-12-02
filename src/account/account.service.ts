@@ -7,6 +7,7 @@ import { Account } from './account.entity';
 import { Logger } from '@nestjs/common';
 
 import passwordEncDec from 'src/helpers/Bcrypt';
+import { response } from 'express';
 
 @Injectable()
 export class AccountService {
@@ -38,7 +39,10 @@ export class AccountService {
   }
 
   async findAll(): Promise<Account[]> {
-    return await this.accountRepository.find();
+    const response = this.accountRepository
+      .createQueryBuilder(`account`)
+      .select([`account.id`, `account.username`]);
+    return response.getMany();
   }
 
   async remove(id: string): Promise<string> {

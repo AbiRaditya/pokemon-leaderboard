@@ -16,16 +16,19 @@ import { QuizModules } from './quiz/quiz.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'leaderboard-pokemon.c6zsylxpudzb.ap-southeast-1.rds.amazonaws.com',
-      // host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'postgres',
-      entities: [Account, Leaderboard, Player],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: +configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        entities: [Account, Leaderboard, Player],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     AccountModule,
     LeaderboardModule,

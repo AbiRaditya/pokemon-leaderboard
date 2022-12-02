@@ -26,6 +26,22 @@ export class PlayerService {
   }
 
   async findAll(): Promise<[Player[], number]> {
-    return await this.playerRepository.findAndCount();
+    const response = this.playerRepository
+      .createQueryBuilder(`player`)
+      .select([`player.player_name`])
+      .orderBy(`player.player_name`, `ASC`);
+
+    return response.getManyAndCount();
+  }
+  async findByToken(device_token: string): Promise<Player> {
+    if (!device_token) {
+      return null;
+    }
+
+    const response = this.playerRepository
+      .createQueryBuilder(`player`)
+      .select([`player.id`, `player.player_name`])
+      .where(`player.device_token = :device_token`, { device_token });
+    return response.getOne();
   }
 }

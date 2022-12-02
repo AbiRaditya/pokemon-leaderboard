@@ -26,6 +26,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message,
       (exception as any).stack,
       'exception-filter-28',
+      status,
       exception,
       message,
       // `${request.method} ${request.url}`,
@@ -50,8 +51,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message = (exception as CannotCreateEntityIdMapError).message;
         code = (exception as any).code;
         break;
-      default:
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
+      // default:
+      //   status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return GlobalResponseError(status, [message], code);
     // response
