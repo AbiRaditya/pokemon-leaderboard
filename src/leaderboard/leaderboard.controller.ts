@@ -42,7 +42,9 @@ export class LeaderboardController {
   }
 
   @Get()
-  async findAll(@Headers() headers): Promise<Leaderboard[]> {
+  async findAll(
+    @Headers() headers: { device_token: string },
+  ): Promise<Leaderboard[]> {
     try {
       const device_token = headers.device_token;
 

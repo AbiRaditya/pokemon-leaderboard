@@ -20,6 +20,7 @@ export class LeaderboardService {
       throw { message: { message: 'token not found' } };
     }
     const player = await this.playerService.findByToken(device_token);
+    // const player = await this.findByToken.find(device_token);
     // Logger.log('player find', JSON.stringify(player), device_token);
 
     if (!player) {

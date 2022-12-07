@@ -5,8 +5,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
   // OneToMany,
 } from 'typeorm';
+import passwordEncDec from 'src/helpers/Bcrypt';
 // import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
 
 @Entity('account')
@@ -48,6 +51,12 @@ export class Account extends BaseEntity {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   public updated_at: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async beforeInster(): Promise<void> {
+    this.password = await passwordEncDec.encrypt(this.password);
+  }
 
   // @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.account)
   // leaderboards: Leaderboard[];

@@ -31,8 +31,14 @@ export class QuizController {
   ) {}
 
   @Get()
-  async getQuizes() {
+  async getQuizes(@Headers() headers: { device_token: string }) {
     try {
+      const device_token = headers.device_token;
+      const decrypted_token = decodeHash(device_token);
+      if (!device_token || !decrypted_token) {
+        throw { message: { message: 'Token not found' } };
+      }
+      // Logger.log(encodeString(device_token), 'hashed device token');
       const numbers = NumberGenerate.oneTo1154();
       const pokemonRequests = [];
 
@@ -65,18 +71,22 @@ export class QuizController {
   }
 
   @Post()
-  async postQuiz(@Body() quizDto: [PostQuizDto], @Headers() headers) {
+  async postQuiz(
+    @Body() quizDto: [PostQuizDto],
+    @Headers() headers: { device_token: string },
+  ) {
     try {
       const device_token = headers.device_token;
-      if (!device_token) {
-        throw { message: { message: 'Token not found' } };
+      const decrypted_token = decodeHash(device_token);
+      if (!device_token || !decrypted_token) {
+        throw { message: { message: 'Token not found / tampered' } };
       }
       // user is given 5 seconds max to answer to get bonus points
       // if user answers above 5 seconds then the default score will be 100
       // for every second that the user doesn't use, it will be multiplied by 50
       // if the user answer is wrong then the score is 0
 
-      // Logger.log('quizDto', quizDto);
+      // Logger.log(decodeHash(device_token), 'decodeHash');
       const decodedIds = quizDto.map((each) => {
         // Logger.log('encodeid', decodeHash(each.id));
         return { ...each, id: +decodeHash(each.id) };
@@ -85,12 +95,17 @@ export class QuizController {
       const pokemonRequests = [];
 
       decodedIds.forEach((data) => {
-        pokemonRequests.push(
-          firstValueFrom(
-            this.http.get(`https://pokeapi.co/api/v2/pokemon/${data.id}`),
-          ),
-        );
+        if (data.id) {
+          pokemonRequests.push(
+            firstValueFrom(
+              this.http.get(`https://pokeapi.co/api/v2/pokemon/${data.id}`),
+            ),
+          );
+        }
       });
+      if (!pokemonRequests.length) {
+        throw { message: { message: 'incorrect ids / id tampered' } };
+      }
       const pokemonResponses = await Promise.all(pokemonRequests);
 
       const reducedPokemonId = pokemonResponses.reduce((acc, pokemon) => {
@@ -116,7 +131,7 @@ export class QuizController {
       });
       return await this.leaderboardService.create(
         { score: Math.ceil(+totalScore), type: 10 },
-        device_token,
+        decrypted_token,
       );
     } catch (error) {
       Logger.log(error, 'error 59');
