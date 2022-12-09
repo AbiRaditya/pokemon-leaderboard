@@ -6,9 +6,6 @@ import { Account } from './account.entity';
 
 import { Logger } from '@nestjs/common';
 
-import passwordEncDec from 'src/helpers/Bcrypt';
-import { response } from 'express';
-
 @Injectable()
 export class AccountService {
   constructor(
@@ -23,7 +20,8 @@ export class AccountService {
       const account = new Account();
       // Logger.log(accountDto, 'accountDto');
       account.username = accountDto.username;
-      account.password = await passwordEncDec.encrypt(accountDto.password);
+      // account.password = await passwordEncDec.encrypt(accountDto.password);
+      account.password = accountDto.password;
       account.type = accountDto.type;
 
       const { id, username } = await this.accountRepository.save(account);
@@ -50,18 +48,21 @@ export class AccountService {
     return `Account with id:${id} successfully deleted`;
   }
 
-  async findOne(username: string): Promise<AccountDto> {
+  async findOne(
+    username: string,
+  ): Promise<AccountDto & { id: number | string }> {
     try {
-      Logger.log(username, 'username 46');
-      if (!username) {
-        throw new Error('Username Not Found');
-      }
+      // Logger.log(username, 'username 46');
+      // if (!username) {
+      //   throw new Error('Username Not Found');
+      // }
 
       const account = await this.accountRepository.findOne({
         where: {
           username: username,
         },
       });
+
       Logger.log(JSON.stringify(account), 'findOne');
       return account;
     } catch (error) {
